@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ func askUserYN(q string, reader *bufio.Reader) bool {
 	fmt.Println(q)
 	ans := readUserInput(reader)
 	for !isYes(ans) && !isNo(ans) {
-		fmt.Printf("Huh? what did you mean by %v?", ans)
+		fmt.Printf("Huh? What did you mean by %v?", ans)
 		ans = readUserInput(reader)
 	}
 	return isYes(ans)
@@ -39,4 +40,19 @@ func isNo(s string) bool {
 	mNo := map[string]bool{"n": true, "no": true, "no thanks": true, "no thank you": true, "maybe next time": true, "nah": true, "nah bruh": true, "next time": true}
 	_, ok := mNo[strings.ToLower(s)]
 	return ok
+}
+
+func readValidInt(reader *bufio.Reader, l, u int) int {
+	s := readUserInput(reader)
+	ret, err := strconv.Atoi(s)
+	if err != nil {
+		os.Stderr.WriteString(err.Error())
+		fmt.Printf("\nThat's not how this works...that's not how any of this works\nLet's try this again...\nHow many coins would you like to remove?\n")
+		return readValidInt(reader, l, u)
+	}
+	if ret < l || ret > u {
+		fmt.Printf("%v is not a valid number! Input a number between %v and %v\nLet's try this again...\nHow many coins would you like to remove?\n", ret, l, u)
+		return readValidInt(reader, l, u)
+	}
+	return ret
 }
