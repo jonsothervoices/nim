@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+type game struct {
+	Coins int
+	Move  int
+	State string
+}
+
 const rules = `THE RULES OF NIM:
 1. Nim is a mathematical game of strategy in which two players take turns removing (or "nimming") coins from a starting pile.
 2. On each turn, the player removes either one, two, or three coins from the pile.
@@ -45,4 +51,17 @@ func playNim(reader *bufio.Reader, coins int) {
 	}
 	//if not, recurse
 	playNim(reader, coins)
+}
+
+func (daGame *game) play() error {
+	if daGame.Move < 1 || daGame.Move > 3 {
+		return fmt.Errorf("Invalid number: must be between 1 and 3")
+	}
+	daGame.Coins -= daGame.Move
+	daGame.Move = 4 - daGame.Move
+	daGame.Coins -= daGame.Move
+	if daGame.Coins == 0 {
+		daGame.State = "you lose!"
+	}
+	return nil
 }

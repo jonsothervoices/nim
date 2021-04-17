@@ -3,11 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 )
 
 func main() {
-	fmt.Println("Hello, nim! Wanna play?")
+	fmt.Println("Hello, nim! Wanna play online?")
 	reader := bufio.NewReader(os.Stdin)
 	str := readUserInput(reader)
 	for !isYes(str) && !isNo(str) {
@@ -15,9 +17,12 @@ func main() {
 		str = readUserInput(reader)
 	}
 	if isNo(str) {
-		fmt.Println("Ok, bye!")
+		printRules(reader)
+		playNim(reader, 12)
 		return
 	}
-	printRules(reader)
-	playNim(reader, 12)
+	//online stuff
+	fmt.Println("Go to http://localhost:8080/ to play--I'll see you there!")
+	http.Handle("/", newAPI())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
